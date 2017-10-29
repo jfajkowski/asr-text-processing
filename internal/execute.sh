@@ -5,7 +5,7 @@ load_log_tool() {
 }
 
 
-run() {
+execute() {
     set -o pipefail
     log_message="${1}"; shift
 
@@ -22,5 +22,5 @@ run() {
 
 load_log_tool
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    run "$@"
+    execute "$@"
 fi
