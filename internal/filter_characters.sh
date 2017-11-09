@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
+delimiters="-"
 whitelist="a-zA-ZąĄćĆęĘłŁńŃóÓśŚźŹżŻ"
 special=" \n"
 
-tr -cd "${whitelist}${special}"
+tr "${delimiters}" " " | tr -cd "${whitelist}${special}"
