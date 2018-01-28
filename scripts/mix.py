@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import argparse
 import logging
 import random
@@ -47,8 +48,11 @@ def select_from_corpus(corpus, max_corpus_count, count_method):
                 print(line.rstrip('\n'))
             iteration += 1
             corpus_count += iteration_count
-    logging.info('Selected {} {} from {} in {} iteration(s)'.format(corpus_count, count_method_unit(count_method), corpus, iteration))
+    logging.info(
+        'Selected {} {} from {} in {} iteration(s)'.format(corpus_count, count_method_unit(count_method),
+                                                           corpus, iteration))
     return corpus_count
+
 
 def random_lines(file, max_count, count_method):
     count = 0
@@ -83,7 +87,7 @@ def count_words(line):
 
 
 def count_method_unit(count_method):
-    return  count_method.__name__.replace('count_', '')
+    return count_method.__name__.replace('count_', '')
 
 
 def main():

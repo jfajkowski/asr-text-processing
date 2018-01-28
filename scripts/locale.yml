@@ -1,0 +1,9 @@
+# Languages
+pl:
+  name: 'polish'
+
+  # Regions
+  PL:
+    name:       'Poland'
+    characters: 'a-zA-ZąĄćĆęĘłŁńŃóÓśŚźŹżŻ'
+    separators: ' -'

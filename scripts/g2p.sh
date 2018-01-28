@@ -3,7 +3,7 @@
 to_phonemes() {
     language=${1}
     espeak -v ${language} -q -x --ipa=3 |
-    sed -e 's/ //' -e 's:_: :g' -e 's/ː//g' -e 's/ˈ//g' -e 's/ˌ//g'
+    sed -e 's/^ //' -e 's/ /|/g' -e 's:_: :g' -e 's/ː//g' -e 's/ˈ//g' -e 's/ˌ//g'
 }
 
 main() {

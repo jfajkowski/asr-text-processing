@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import argparse
 import os
 import re
@@ -9,9 +10,10 @@ from abc import ABC, abstractmethod
 
 LOCALE_YML = os.path.dirname(os.path.realpath(__file__)) + '/locale.yml'
 
+
 class Cleaner(ABC):
     @abstractmethod
-    def apply(self, text):
+    def clean(self, text):
         pass
 
 
@@ -21,7 +23,7 @@ class HyperlinksCleaner(Cleaner):
     def __init__(self):
         self.regex = re.compile(HyperlinksCleaner.PATTERN)
 
-    def apply(self, text):
+    def clean(self, text):
         if None in self.regex.split(text):
             print(text)
         return ' '.join(self.regex.split(text))
@@ -29,7 +31,7 @@ class HyperlinksCleaner(Cleaner):
 
 class EmoticonsCleaner(Cleaner):
     SIDEWAYS = [r'[;:xX][-]?[dDoOsSpP]+?']
-    UPRIGHT  = [r'[*;^][_,][*;^]']
+    UPRIGHT = [r'[*;^][_,][*;^]']
 
     def __init__(self):
         self.sideways_regex = re.compile(r'\b' + r'\b|\b'.join(EmoticonsCleaner.SIDEWAYS) + r'\b|'
@@ -37,7 +39,7 @@ class EmoticonsCleaner(Cleaner):
         self.upright_regex = re.compile(r'\b' + r'\b|\b'.join(EmoticonsCleaner.UPRIGHT) + r'\b|'
                                         r'' + r'|\b'.join(EmoticonsCleaner.UPRIGHT) + r'\b')
 
-    def apply(self, text):
+    def clean(self, text):
         text = self.sideways_regex.sub(' ', text)
         text = self.upright_regex.sub(' ', text)
         return text
@@ -49,7 +51,7 @@ class AlphanumericCleaner(Cleaner):
     def __init__(self):
         self.regex = re.compile(AlphanumericCleaner.SPLIT_PATTERN)
 
-    def apply(self, text):
+    def clean(self, text):
         words = self.regex.split(text)
         filtered = filter(lambda w: w.isalnum() and (w.isalpha() or w.isnumeric()), words)
         return ' '.join(filtered)
@@ -59,7 +61,7 @@ class CharacterCleaner(Cleaner):
     def __init__(self, characters):
         self.regex = re.compile(r'[^' + characters + ']')
 
-    def apply(self, text):
+    def clean(self, text):
         return self.regex.sub(' ', text)
 
 
@@ -68,14 +70,14 @@ class SeparatorCleaner(Cleaner):
         self.separators = separators
         self.regex = re.compile(r'[' + separators + ']+')
 
-    def apply(self, text):
+    def clean(self, text):
         return self.regex.sub(' ', text).strip(self.separators)
 
 
 class TyposCleaner(Cleaner):
     MAX_IN_ROW = 3
 
-    def apply(self, text):
+    def clean(self, text):
         cleaned = ''
         prev_letter = ''
         buffer = ''
@@ -114,7 +116,7 @@ def clean(files, locale, delimiter='\t', field=1, locale_yml=LOCALE_YML):
                 for line in f_in:
                     line = line.rstrip('\n').split(delimiter)
                     for cleaner in pipeline:
-                        line[field - 1] = cleaner.apply(line[field - 1])
+                        line[field - 1] = cleaner.clean(line[field - 1])
                     line = delimiter.join(line)
                     print(line)
 
@@ -127,6 +129,7 @@ def read_locale_config(locale, locale_yml):
     characters = config[language_code][region_code]['characters']
     separators = config[language_code][region_code]['separators']
     return characters, separators
+
 
 def main():
     args = parse_args()

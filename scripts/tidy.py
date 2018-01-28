@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import argparse
 import re
 import sys
@@ -7,14 +8,14 @@ from abc import ABC, abstractmethod
 
 class Tidier(ABC):
     @abstractmethod
-    def apply(self, text):
+    def tidy(self, text):
         pass
 
 
 class JavaScriptTidier(Tidier):
     KEYWORDS = ['$(document)']
 
-    def apply(self, text):
+    def tidy(self, text):
         for keyword in JavaScriptTidier.KEYWORDS:
             if keyword in text:
                 return ''
@@ -30,7 +31,7 @@ class MarkupTidier(Tidier):
     def __init__(self):
         self.regex = re.compile(MarkupTidier.PATTERN)
 
-    def apply(self, text):
+    def tidy(self, text):
         return self.regex.sub(' ', text)
 
 
@@ -41,7 +42,7 @@ class CharacterTidier(Tidier):
     def __init__(self):
         self.regex = re.compile(CharacterTidier.PATTERN)
 
-    def apply(self, text):
+    def tidy(self, text):
         return self.regex.sub(' ', text)
 
 
@@ -52,14 +53,14 @@ class AsciiArtTidier(Tidier):
     def __init__(self):
         self.regex = re.compile(AsciiArtTidier.PATTERN)
 
-    def apply(self, text):
+    def tidy(self, text):
         return self.regex.sub(' ', text)
 
 
-class TrailingTidier():
+class TrailingTidier(Tidier):
     CHARACTERS = ' '
 
-    def apply(self, text):
+    def tidy(self, text):
         return text.strip(' ')
 
 
@@ -67,7 +68,7 @@ class UniqueTidier(Tidier):
     def __init__(self):
         self._lines = set()
 
-    def apply(self, text):
+    def tidy(self, text):
         if text not in self._lines:
             self._lines.add(text)
             return text
@@ -96,7 +97,7 @@ def tidy(files):
             for line in f_in:
                 line = line.rstrip('\n')
                 for tidier in pipeline:
-                    line = tidier.apply(line)
+                    line = tidier.tidy(line)
                 if line:
                     print(line)
 
